@@ -975,6 +975,383 @@ Preventívne opatrenia:
 • Proces nahlásenia a reakcie na incident`,
     src: 'KIB_03_Riadenie_aktív_rizík.pdf'
   },
+  {
+    cat: 'ISMS',
+    q: 'Čo je rozsah ISMS a prečo sa musí jasne určiť?',
+    a: `Rozsah ISMS hovorí, na ktoré časti organizácie sa systém riadenia informačnej bezpečnosti vzťahuje.
+
+Môže zahŕňať:
+• konkrétne procesy, pobočky, systémy alebo služby
+• typy informácií a aktív
+• interné aj externé väzby, napríklad dodávateľov alebo cloud
+
+Je dôležitý preto, lebo bez jasného rozsahu nevieme, ktoré riziká hodnotiť, ktoré opatrenia zaviesť, kto má zodpovednosť a čo sa má auditovať.
+
+Na skúške dobrá veta: rozsah ISMS musí byť primeraný kontextu organizácie, jej cieľom, požiadavkám zainteresovaných strán a hraniciam zodpovednosti.`,
+    src: 'KIB_01_ISMS.pdf'
+  },
+  {
+    cat: 'ISMS',
+    q: 'Čo je Statement of Applicability (SoA)?',
+    a: `Statement of Applicability je vyhlásenie o aplikovateľnosti bezpečnostných opatrení.
+
+V praxi je to dokument, ktorý pri každom opatrení uvádza:
+• či je pre organizáciu aplikovateľné
+• prečo je zahrnuté alebo vylúčené
+• aký je stav implementácie
+• na ktoré riziká alebo požiadavky reaguje
+
+SoA prepája analýzu rizík s konkrétnymi opatreniami. Je to jeden z kľúčových dôkazov, že organizácia nevybrala opatrenia náhodne, ale podľa rizík, kontextu a požiadaviek normy.`,
+    src: 'KIB_01_ISMS.pdf'
+  },
+  {
+    cat: 'CTI & Threat Intel',
+    q: 'Aký je životný cyklus Cyber Threat Intelligence?',
+    a: `Typický CTI cyklus:
+• Plánovanie a smerovanie – určí sa, čo potrebujeme vedieť a pre koho.
+• Zber dát – logy, IoC, OSINT, dark web, reporty, incidenty, zdieľané feedy.
+• Spracovanie – čistenie, normalizácia, deduplikácia, obohatenie dát.
+• Analýza – hľadanie významu, kontextu, kampaní, TTPs a rizika pre organizáciu.
+• Distribúcia – výstup pre SOC, manažment, IT prevádzku alebo risk tím.
+• Spätná väzba – overenie, či informácie pomohli a čo treba zlepšiť.
+
+Pointa: CTI nie je len zoznam škodlivých IP adries. Hodnota vzniká až vtedy, keď informácia vedie ku konkrétnej akcii.`,
+    src: 'KIB_02_CTI_I.pdf'
+  },
+  {
+    cat: 'CTI & Threat Intel',
+    q: 'Vysvetlite Cyber Kill Chain.',
+    a: `Cyber Kill Chain opisuje fázy útoku od prípravy po dosiahnutie cieľa.
+
+Typické fázy:
+• Reconnaissance – prieskum cieľa
+• Weaponization – príprava škodlivého nástroja alebo dokumentu
+• Delivery – doručenie, napríklad phishingom
+• Exploitation – zneužitie zraniteľnosti alebo chyby používateľa
+• Installation – inštalácia malvéru alebo backdooru
+• Command and Control – komunikácia s útočníkom
+• Actions on Objectives – krádež dát, šifrovanie, sabotáž
+
+Použitie: ak vieme, v ktorej fáze sa útok nachádza, vieme navrhnúť detekcie a opatrenia skôr, než útočník splní cieľ.`,
+    src: 'KIB_02_CTI_I.pdf'
+  },
+  {
+    cat: 'CTI & Threat Intel',
+    q: 'Na čo slúži MITRE ATT&CK?',
+    a: `MITRE ATT&CK je znalostná báza taktík, techník a postupov útočníkov.
+
+Pomáha:
+• pomenovať správanie útočníka jednotným jazykom
+• mapovať detekcie a bezpečnostné opatrenia
+• porovnať pokrytie SOC a SIEM pravidiel
+• robiť threat modeling a purple teaming
+• vysvetliť incident cez TTPs, nie iba cez IoC
+
+Rozdiel oproti IoC: IoC môže rýchlo zastarať, napríklad IP adresa sa zmení. TTPs sú stabilnejšie, lebo opisujú spôsob práce útočníka.`,
+    src: 'KIB_06_CTI_II (1).pdf'
+  },
+  {
+    cat: 'CTI & Threat Intel',
+    q: 'Čo sú STIX a TAXII?',
+    a: `STIX a TAXII sú štandardy na štruktúrované zdieľanie informácií o hrozbách.
+
+STIX:
+• formát na opis hrozieb, kampaní, aktérov, IoC, malvéru, TTPs a vzťahov medzi nimi
+• umožňuje, aby informácie neboli len textový report, ale strojovo spracovateľné dáta
+
+TAXII:
+• protokol/služba na výmenu STIX informácií medzi organizáciami alebo systémami
+
+Význam: uľahčujú automatizované zdieľanie CTI medzi SOC, SIEM, MISP a ďalšími bezpečnostnými nástrojmi.`,
+    src: 'KIB_06_CTI_II (1).pdf'
+  },
+  {
+    cat: 'Riadenie rizík',
+    q: 'Čo je register rizík a čo by mal obsahovať?',
+    a: `Register rizík je evidencia identifikovaných rizík a ich stavu.
+
+Mal by obsahovať:
+• opis rizika a scenára
+• dotknuté aktívum/proces
+• hrozbu a zraniteľnosť
+• pravdepodobnosť a dopad
+• úroveň inherentného a zvyškového rizika
+• vlastníka rizika
+• navrhnuté opatrenia
+• termín, stav riešenia a akceptáciu rizika
+
+Je to praktický riadiaci nástroj: pomáha sledovať, ktoré riziká sú otvorené, kto za ne zodpovedá a či sa riziko po opatreniach znížilo.`,
+    src: 'KIB_03_Riadenie_aktív_rizík.pdf'
+  },
+  {
+    cat: 'Riadenie rizík',
+    q: 'Aký je rozdiel medzi inherentným a zvyškovým rizikom?',
+    a: `Inherentné riziko je riziko pred zavedením alebo započítaním bezpečnostných opatrení.
+
+Zvyškové riziko je riziko, ktoré ostane po zavedení opatrení.
+
+Príklad:
+• Inherentné riziko: verejne dostupná webová aplikácia môže byť napadnutá cez zraniteľnosť.
+• Opatrenia: patch management, WAF, testovanie, logovanie, MFA pre administrátorov.
+• Zvyškové riziko: stále existuje možnosť novej zraniteľnosti alebo chyby konfigurácie.
+
+Zvyškové riziko musí organizácia buď akceptovať, ďalej znižovať, preniesť alebo sa mu vyhnúť.`,
+    src: 'KIB_03_Riadenie_aktív_rizík.pdf'
+  },
+  {
+    cat: 'Riadenie rizík',
+    q: 'Čo znamená vlastník aktíva a vlastník rizika?',
+    a: `Vlastník aktíva je osoba alebo rola, ktorá zodpovedá za aktívum z pohľadu hodnoty, používania, klasifikácie a ochrany.
+
+Vlastník rizika je osoba alebo rola, ktorá má právomoc a zodpovednosť rozhodnúť, čo sa s rizikom urobí.
+
+Nemusí to byť tá istá osoba. IT správca môže technicky spravovať systém, ale vlastník rizika býva často biznis manažér, ktorý rozumie dopadu výpadku alebo úniku dát.
+
+Na skúške: riziko nemá ostať "bez majiteľa", inak sa opatrenia nebudú reálne riadiť.`,
+    src: 'KIB_03_Riadenie_aktív_rizík.pdf'
+  },
+  {
+    cat: 'Politiky & Stratégia',
+    q: 'Aký je rozdiel medzi bezpečnostnou stratégiou a bezpečnostnou politikou?',
+    a: `Bezpečnostná stratégia určuje dlhodobý smer: kam sa chce organizácia dostať, aké má priority, ciele, roadmapu a investičné oblasti.
+
+Bezpečnostná politika stanovuje záväzné pravidlá a rámec správania: čo sa musí dodržiavať, kto má zodpovednosť a aké princípy platia.
+
+Jednoducho:
+• stratégia = smer a plán rozvoja bezpečnosti
+• politika = pravidlá a záväzný rámec
+
+Príklad: stratégia povie, že organizácia chce zaviesť Zero Trust a posilniť SOC. Politika povie, že všetky privilegované účty musia používať MFA a prístupy sa pravidelne revidujú.`,
+    src: 'KIB_04_Strategia_politiky_Makatura_AKB.pdf'
+  },
+  {
+    cat: 'Personálna bezpečnosť',
+    q: 'Aké opatrenia patria pred nástupom, počas práce a pri odchode zamestnanca?',
+    a: `Pred nástupom:
+• preverenie primerané pozícii
+• NDA a pracovné podmienky
+• definovanie roly a prístupov
+
+Počas práce:
+• školenia a bezpečnostné povedomie
+• prideľovanie prístupov podľa least privilege
+• pravidelné revízie oprávnení
+• disciplinárny proces pri porušení pravidiel
+• hlásenie incidentov a podozrivého správania
+
+Pri odchode:
+• okamžité odobratie prístupov
+• vrátenie zariadení a médií
+• pripomenutie mlčanlivosti
+• bezpečný transfer znalostí a vlastníctva dát
+
+Najčastejšia skúšková pointa: personálna bezpečnosť pokrýva celý životný cyklus zamestnanca, nie iba školenie.`,
+    src: 'KIB_05_Personalna_bezpecnost.pdf'
+  },
+  {
+    cat: 'Bezpečnostné opatrenia',
+    q: 'Rozlíšte preventívne, detekčné, korektívne a odstrašujúce opatrenia.',
+    a: `Preventívne opatrenia znižujú pravdepodobnosť incidentu.
+Príklady: MFA, patchovanie, školenia, segmentácia siete.
+
+Detekčné opatrenia pomáhajú zistiť, že sa niečo stalo.
+Príklady: monitoring, SIEM, IDS, logovanie, alerty.
+
+Korektívne opatrenia pomáhajú obnoviť stav po incidente.
+Príklady: obnova zo záloh, reimage stanice, reset hesiel, oprava konfigurácie.
+
+Odstrašujúce opatrenia majú odradiť od porušenia pravidiel.
+Príklady: bezpečnostné kamery, upozornenia, sankcie, právne doložky.
+
+Dobrý návrh opatrení kombinuje viac typov, aby organizácia vedela incidentom predchádzať, zistiť ich aj zotaviť sa z nich.`,
+    src: 'KIB_07_Bezpecnostne_opatrenia_Axenta.pdf'
+  },
+  {
+    cat: 'Bezpečnostné opatrenia',
+    q: 'Aké sú základné fázy riešenia bezpečnostného incidentu?',
+    a: `Typický incident response proces:
+• Príprava – politiky, role, kontakty, nástroje, cvičenia.
+• Identifikácia – potvrdenie incidentu, rozsah, dotknuté aktíva.
+• Zadržanie – izolácia účtu, stanice, siete alebo služby.
+• Eradikácia – odstránenie príčiny, malvéru, zraniteľnosti.
+• Obnova – návrat služieb do prevádzky a zvýšené monitorovanie.
+• Poučenie – lessons learned, aktualizácia opatrení, školení a detekcií.
+
+Na skúške je dobré zdôrazniť, že incident nekončí obnovením služby. Musí sa vyhodnotiť príčina a upraviť opatrenia.`,
+    src: 'KIB_07_Bezpecnostne_opatrenia_Axenta.pdf'
+  },
+  {
+    cat: 'Fyzická bezpečnosť',
+    q: 'Ako funguje princíp bezpečnostných zón vo fyzickej bezpečnosti?',
+    a: `Bezpečnostné zóny rozdeľujú priestory podľa citlivosti a požadovanej úrovne ochrany.
+
+Príklad vrstiev:
+• verejná zóna – recepcia, chodby pre návštevy
+• interná zóna – kancelárie zamestnancov
+• obmedzená zóna – priestory s citlivými informáciami
+• vysoko chránená zóna – serverovňa, dátové centrum, OT riadiaca miestnosť
+
+Opatrenia sa stupňujú: identifikácia návštev, sprievod, prístupové karty, kamery, alarm, evidovanie vstupov, zamykanie rackov, environmentálne senzory.
+
+Pointa: fyzický prístup často znamená aj kybernetické riziko.`,
+    src: 'KIB_10_Fyzická bezpečnosť_Axenta.pdf'
+  },
+  {
+    cat: 'Dodávatelia',
+    q: 'Čo má obsahovať bezpečnostná zmluva alebo SLA s dodávateľom?',
+    a: `Zmluva s dodávateľom by mala obsahovať bezpečnostné požiadavky primerané riziku služby.
+
+Dôležité body:
+• ochrana a klasifikácia dát
+• šifrovanie a bezpečný prenos dát
+• pravidlá prístupov, MFA a least privilege
+• logovanie a monitoring
+• oznamovanie incidentov v dohodnutom čase
+• právo na audit alebo predloženie auditných správ
+• požiadavky na subdodávateľov
+• zálohovanie, BCP/DR a dostupnosť služby
+• bezpečné vrátenie alebo vymazanie dát po ukončení
+
+SLA rieši aj dostupnosť, reakčné časy, obnovu a sankcie pri nedodržaní.`,
+    src: 'KIB_11_Riadenie dodávateľských vzťahov_Matej.pdf'
+  },
+  {
+    cat: 'BCM & Kontinuita',
+    q: 'Aký je rozdiel medzi BCP, DRP a krízovým plánom?',
+    a: `BCP (Business Continuity Plan) rieši, ako bude organizácia pokračovať v kritických procesoch počas narušenia.
+
+DRP (Disaster Recovery Plan) je technickejší plán obnovy IT systémov, dát, infraštruktúry a služieb.
+
+Krízový plán rieši riadenie mimoriadnej situácie: rozhodovanie, eskaláciu, komunikáciu, krízový tím a kontakty.
+
+Príklad:
+• BCP: ako budeme fakturovať, keď účtovný systém nefunguje
+• DRP: ako obnovíme účtovný systém zo záloh
+• krízový plán: kto rozhoduje, koho informujeme a ako komunikujeme so zákazníkmi`,
+    src: 'KIB_12_BCM.pdf'
+  },
+  {
+    cat: 'BCM & Kontinuita',
+    q: 'Prečo sa musia BCM a DR plány testovať?',
+    a: `Plán, ktorý sa netestoval, je iba predpoklad.
+
+Testovanie overuje:
+• či kontakty a role stále platia
+• či sa dá obnova stihnúť v RTO
+• či zálohy spĺňajú RPO
+• či ľudia poznajú svoje úlohy
+• či existujú závislosti, na ktoré sa zabudlo
+• či dokumentácia zodpovedá realite
+
+Formy testovania:
+• tabletop cvičenie
+• technický test obnovy
+• čiastočné alebo úplné cvičenie
+• simulácia výpadku
+
+Po teste majú nasledovať zistenia, nápravné opatrenia a aktualizácia plánov.`,
+    src: 'KIB_12_BCM.pdf'
+  },
+  {
+    cat: 'OT & IoT',
+    q: 'Aké špecifiká má bezpečnosť IoT zariadení?',
+    a: `IoT zariadenia majú často iný bezpečnostný profil než bežné IT systémy.
+
+Typické problémy:
+• slabé alebo predvolené heslá
+• obmedzený výkon a pamäť
+• slabý patch management
+• dlhý životný cyklus zariadení
+• neistý pôvod firmvéru
+• zber citlivých dát zo senzorov
+• komunikácia cez rôzne protokoly
+
+Opatrenia:
+• zmeniť predvolené heslá a používať silnú autentifikáciu
+• segmentovať IoT sieť
+• aktualizovať firmvér
+• vypnúť nepotrebné služby
+• monitorovať komunikáciu
+• evidovať zariadenia a ich vlastníkov`,
+    src: 'KIB_10_IoT_Axenta.pdf'
+  },
+  {
+    cat: 'OT & IoT',
+    q: 'Čo je Purdue model v OT bezpečnosti?',
+    a: `Purdue model je vrstvený model priemyselných riadiacich systémov.
+
+Zjednodušene rozdeľuje prostredie na:
+• podnikové IT systémy
+• priemyselnú DMZ
+• dohľadové systémy, napríklad SCADA/HMI
+• riadiace systémy, napríklad PLC
+• senzory, aktuátory a fyzický proces
+
+Význam pre bezpečnosť:
+• pomáha oddeliť IT a OT siete
+• určuje, kde má byť firewall, DMZ a monitoring
+• znižuje riziko, že incident z kancelárskej siete zasiahne výrobu
+• podporuje princíp segmentácie a kontrolovaných tokov komunikácie`,
+    src: 'KIB_13_OT cyber SSDLC.pdf'
+  },
+  {
+    cat: 'OT & IoT',
+    q: 'Prečo je v OT často dôležitejšia dostupnosť a bezpečnosť procesu než dôvernosť?',
+    a: `V klasickom IT sa často zdôrazňuje CIA triáda v poradí dôvernosť, integrita, dostupnosť.
+
+V OT prostredí býva priorita iná:
+• bezpečnosť ľudí a fyzického procesu
+• dostupnosť výroby alebo služby
+• integrita meraní a riadiacich príkazov
+• až potom dôvernosť dát
+
+Dôvod: OT riadi fyzické procesy. Incident môže spôsobiť výpadok výroby, poškodenie zariadenia, environmentálnu škodu alebo ohrozenie zdravia.
+
+Preto sa v OT zmeny robia opatrne, patchovanie sa plánuje a testuje a opatrenia nesmú narušiť stabilitu procesu.`,
+    src: 'KIB_13_OT cyber SSDLC.pdf'
+  },
+  {
+    cat: 'OT & IoT',
+    q: 'Čo je SSDLC a ako pomáha kybernetickej bezpečnosti?',
+    a: `SSDLC (Secure Software Development Life Cycle) znamená bezpečný životný cyklus vývoja softvéru.
+
+Bezpečnosť sa nerieši až na konci, ale v každej fáze:
+• požiadavky – bezpečnostné požiadavky a regulácie
+• návrh – threat modeling, architektúra, bezpečné vzory
+• implementácia – secure coding, code review
+• testovanie – SAST, DAST, penetračné testy, kontrola závislostí
+• nasadenie – bezpečná konfigurácia, secrets management
+• prevádzka – monitoring, patchovanie, incident response
+
+Prínos: chyby sa zachytia skôr, lacnejšie sa opravujú a systém je bezpečnejší už od návrhu.`,
+    src: 'KIB_13_OT cyber SSDLC.pdf'
+  },
+  {
+    cat: 'Praktické scenáre',
+    q: 'Organizácia používa starý nepodporovaný systém. Vyhodnoťte riziko a navrhnite opatrenia.',
+    a: `Riziko:
+• systém nemá bezpečnostné aktualizácie
+• rastie pravdepodobnosť zneužitia známej zraniteľnosti
+• môže chýbať podpora dodávateľa
+• problém s kompatibilitou, auditom a reguláciou
+
+Dopad:
+• výpadok služby
+• únik alebo poškodenie dát
+• šírenie útoku do siete
+• reputačné a právne následky
+
+Opatrenia:
+• naplánovať migráciu alebo upgrade
+• segmentovať systém do oddelenej siete
+• obmedziť prístupy a použiť MFA pre administráciu
+• zakázať nepotrebné služby
+• zvýšiť monitoring a logovanie
+• virtuálne patchovanie cez firewall/WAF/IPS
+• pravidelné zálohy a test obnovy
+• formálne akceptovať zvyškové riziko, ak systém musí dočasne ostať`,
+    src: 'KIB_03_Riadenie_aktív_rizík.pdf'
+  },
 ];
 
 // =====================================================
