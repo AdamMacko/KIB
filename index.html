@@ -1,0 +1,1238 @@
+<!DOCTYPE html>
+<html lang="sk">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>KIB – Príprava na skúšku</title>
+<style>
+  :root {
+    --blue: #2563eb;
+    --blue-dark: #1d4ed8;
+    --blue-light: #eff6ff;
+    --green: #16a34a;
+    --green-light: #f0fdf4;
+    --red: #dc2626;
+    --red-light: #fef2f2;
+    --yellow: #d97706;
+    --yellow-light: #fffbeb;
+    --gray: #6b7280;
+    --gray-light: #f9fafb;
+    --border: #e5e7eb;
+    --text: #111827;
+    --text-sec: #4b5563;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Segoe UI', system-ui, sans-serif; background: #f3f4f6; color: var(--text); min-height: 100vh; }
+
+  /* Header */
+  header { background: var(--blue); color: white; padding: 16px 24px; display: flex; align-items: center; justify-content: space-between; box-shadow: 0 2px 8px rgba(0,0,0,0.15); }
+  header h1 { font-size: 1.4rem; font-weight: 700; letter-spacing: -0.5px; }
+  header span { font-size: 0.85rem; opacity: 0.85; }
+
+  /* Layout */
+  .container { max-width: 960px; margin: 0 auto; padding: 24px 16px; }
+
+  /* Tab navigation */
+  .tabs { display: flex; gap: 4px; margin-bottom: 24px; background: white; padding: 6px; border-radius: 12px; box-shadow: 0 1px 4px rgba(0,0,0,0.08); }
+  .tab { flex: 1; padding: 10px 8px; border: none; border-radius: 8px; background: transparent; font-size: 0.85rem; font-weight: 500; color: var(--gray); cursor: pointer; transition: all 0.15s; text-align: center; }
+  .tab.active { background: var(--blue); color: white; }
+  .tab:hover:not(.active) { background: var(--blue-light); color: var(--blue); }
+
+  /* View panels */
+  .view { display: none; }
+  .view.active { display: block; }
+
+  /* Stats bar */
+  .stats-bar { display: flex; gap: 12px; margin-bottom: 20px; flex-wrap: wrap; }
+  .stat-card { background: white; border-radius: 10px; padding: 14px 18px; flex: 1; min-width: 120px; box-shadow: 0 1px 4px rgba(0,0,0,0.07); }
+  .stat-card .num { font-size: 1.8rem; font-weight: 700; color: var(--blue); }
+  .stat-card .label { font-size: 0.78rem; color: var(--gray); margin-top: 2px; }
+
+  /* Progress bar */
+  .progress-wrap { background: var(--border); border-radius: 99px; height: 8px; margin-bottom: 20px; overflow: hidden; }
+  .progress-fill { height: 100%; background: var(--green); border-radius: 99px; transition: width 0.4s; }
+
+  /* Category filter */
+  .filter-wrap { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 20px; }
+  .filter-btn { padding: 6px 14px; border-radius: 99px; border: 1.5px solid var(--border); background: white; font-size: 0.8rem; color: var(--text-sec); cursor: pointer; transition: all 0.15s; }
+  .filter-btn.active { background: var(--blue); border-color: var(--blue); color: white; }
+  .filter-btn:hover:not(.active) { border-color: var(--blue); color: var(--blue); }
+
+  /* Flashcard */
+  .flashcard-wrap { perspective: 1200px; }
+  .flashcard { position: relative; width: 100%; min-height: 280px; cursor: pointer; transform-style: preserve-3d; transition: transform 0.5s; }
+  .flashcard.flipped { transform: rotateY(180deg); }
+  .card-face { position: absolute; width: 100%; min-height: 280px; border-radius: 16px; padding: 36px 32px; display: flex; flex-direction: column; justify-content: center; backface-visibility: hidden; box-shadow: 0 4px 20px rgba(0,0,0,0.1); }
+  .card-front { background: white; border: 2px solid var(--border); }
+  .card-back { background: var(--blue); color: white; transform: rotateY(180deg); }
+  .card-tag { font-size: 0.72rem; text-transform: uppercase; letter-spacing: 1px; font-weight: 600; margin-bottom: 12px; }
+  .card-front .card-tag { color: var(--blue); }
+  .card-back .card-tag { color: rgba(255,255,255,0.7); }
+  .card-question { font-size: 1.3rem; font-weight: 600; line-height: 1.45; }
+  .card-answer { font-size: 0.95rem; line-height: 1.65; }
+  .card-hint { position: absolute; bottom: 16px; right: 20px; font-size: 0.75rem; opacity: 0.5; }
+
+  /* Card controls */
+  .card-controls { display: flex; align-items: center; justify-content: space-between; margin-top: 20px; gap: 12px; }
+  .card-counter { font-size: 0.85rem; color: var(--gray); font-weight: 500; }
+  .btn-group { display: flex; gap: 10px; }
+  .btn { padding: 10px 20px; border-radius: 8px; border: none; font-size: 0.9rem; font-weight: 600; cursor: pointer; transition: all 0.15s; }
+  .btn-prev { background: white; color: var(--text); border: 1.5px solid var(--border); }
+  .btn-prev:hover { border-color: var(--blue); color: var(--blue); }
+  .btn-next { background: var(--blue); color: white; }
+  .btn-next:hover { background: var(--blue-dark); }
+  .btn-shuffle { background: var(--yellow-light); color: var(--yellow); border: 1.5px solid #fde68a; }
+  .btn-shuffle:hover { background: #fde68a; }
+
+  /* Self-rating */
+  .rating-wrap { display: flex; gap: 10px; margin-top: 16px; justify-content: center; }
+  .rating-btn { padding: 10px 24px; border-radius: 8px; border: 2px solid transparent; font-size: 0.88rem; font-weight: 600; cursor: pointer; transition: all 0.15s; }
+  .rating-easy { background: var(--green-light); color: var(--green); border-color: #86efac; }
+  .rating-easy:hover { background: #86efac; }
+  .rating-hard { background: var(--red-light); color: var(--red); border-color: #fca5a5; }
+  .rating-hard:hover { background: #fca5a5; }
+  .rating-skip { background: var(--gray-light); color: var(--gray); border-color: var(--border); }
+  .rating-skip:hover { background: var(--border); }
+
+  /* Quiz */
+  .quiz-question { background: white; border-radius: 14px; padding: 28px; box-shadow: 0 1px 8px rgba(0,0,0,0.08); margin-bottom: 16px; }
+  .quiz-q-num { font-size: 0.78rem; color: var(--gray); margin-bottom: 8px; font-weight: 500; text-transform: uppercase; letter-spacing: 0.5px; }
+  .quiz-q-text { font-size: 1.1rem; font-weight: 600; line-height: 1.5; margin-bottom: 20px; }
+  .quiz-options { display: flex; flex-direction: column; gap: 10px; }
+  .quiz-option { padding: 13px 18px; border-radius: 10px; border: 2px solid var(--border); background: white; text-align: left; font-size: 0.92rem; cursor: pointer; transition: all 0.15s; color: var(--text); }
+  .quiz-option:hover:not(:disabled) { border-color: var(--blue); background: var(--blue-light); }
+  .quiz-option.correct { border-color: var(--green); background: var(--green-light); color: var(--green); font-weight: 600; }
+  .quiz-option.wrong { border-color: var(--red); background: var(--red-light); color: var(--red); font-weight: 600; }
+  .quiz-option:disabled { cursor: default; }
+  .quiz-explanation { background: #f8faff; border-left: 4px solid var(--blue); border-radius: 0 8px 8px 0; padding: 14px 16px; margin-top: 14px; font-size: 0.88rem; line-height: 1.6; color: var(--text-sec); display: none; }
+  .quiz-explanation.show { display: block; }
+  .quiz-next-wrap { text-align: center; margin-top: 16px; }
+  .btn-quiz-next { display: none; }
+  .quiz-result { background: white; border-radius: 16px; padding: 40px; text-align: center; box-shadow: 0 4px 20px rgba(0,0,0,0.1); }
+  .quiz-result .score { font-size: 3.5rem; font-weight: 800; color: var(--blue); }
+  .quiz-result .score-label { font-size: 1.1rem; color: var(--gray); margin-bottom: 24px; }
+  .quiz-result .grade { font-size: 1.3rem; font-weight: 700; margin-bottom: 24px; }
+
+  /* Prehľad */
+  .overview-section { background: white; border-radius: 14px; padding: 20px 24px; margin-bottom: 16px; box-shadow: 0 1px 6px rgba(0,0,0,0.07); }
+  .overview-section h3 { font-size: 1rem; font-weight: 700; color: var(--blue); margin-bottom: 14px; padding-bottom: 10px; border-bottom: 1px solid var(--border); }
+  .overview-q { margin-bottom: 18px; }
+  .overview-q .q { font-weight: 600; font-size: 0.95rem; margin-bottom: 6px; cursor: pointer; display: flex; align-items: flex-start; gap: 8px; }
+  .overview-q .q::before { content: '▶'; font-size: 0.6rem; color: var(--blue); margin-top: 5px; flex-shrink: 0; transition: transform 0.2s; }
+  .overview-q .q.open::before { transform: rotate(90deg); }
+  .overview-q .a { font-size: 0.88rem; line-height: 1.7; color: var(--text-sec); display: none; padding: 10px 14px; background: var(--gray-light); border-radius: 8px; white-space: pre-wrap; }
+  .overview-q .a.show { display: block; }
+  .source-badge { font-size: 0.7rem; background: var(--blue-light); color: var(--blue); padding: 2px 8px; border-radius: 99px; font-weight: 500; margin-left: 6px; flex-shrink: 0; }
+
+  /* Responsive */
+  @media (max-width: 600px) {
+    .tabs { flex-wrap: wrap; }
+    .tab { flex: none; width: calc(50% - 2px); }
+    .card-face { padding: 24px 20px; }
+    .card-question { font-size: 1.1rem; }
+    .stats-bar { flex-direction: column; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>KIB – Príprava na skúšku</h1>
+  <span id="header-progress">0 / 0 naučených</span>
+</header>
+
+<div class="container">
+
+  <div class="tabs">
+    <button class="tab active" onclick="switchTab('flashcards')">🃏 Kartičky</button>
+    <button class="tab" onclick="switchTab('quiz')">🧠 Kvíz</button>
+    <button class="tab" onclick="switchTab('overview')">📖 Prehľad</button>
+  </div>
+
+  <!-- FLASHCARDS VIEW -->
+  <div class="view active" id="view-flashcards">
+    <div class="stats-bar">
+      <div class="stat-card"><div class="num" id="stat-learned">0</div><div class="label">Naučených</div></div>
+      <div class="stat-card"><div class="num" id="stat-hard">0</div><div class="label">Ťažkých</div></div>
+      <div class="stat-card"><div class="num" id="stat-remaining">0</div><div class="label">Zostatok</div></div>
+    </div>
+
+    <div class="progress-wrap">
+      <div class="progress-fill" id="progress-bar" style="width:0%"></div>
+    </div>
+
+    <div class="filter-wrap" id="fc-filters"></div>
+
+    <div class="flashcard-wrap">
+      <div class="flashcard" id="flashcard" onclick="flipCard()">
+        <div class="card-face card-front">
+          <div class="card-tag" id="fc-tag">Kategória</div>
+          <div class="card-question" id="fc-question">Načítava sa...</div>
+          <div class="card-hint">Klikni pre odpoveď →</div>
+        </div>
+        <div class="card-face card-back">
+          <div class="card-tag" id="fc-source">Zdroj</div>
+          <div class="card-answer" id="fc-answer"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="rating-wrap" id="rating-wrap" style="display:none;">
+      <button class="rating-btn rating-easy" onclick="rateCard('easy')">✓ Viem to</button>
+      <button class="rating-btn rating-skip" onclick="rateCard('skip')">→ Preskočiť</button>
+      <button class="rating-btn rating-hard" onclick="rateCard('hard')">✗ Ťažké</button>
+    </div>
+
+    <div class="card-controls">
+      <div class="card-counter" id="card-counter">1 / 1</div>
+      <div class="btn-group">
+        <button class="btn btn-shuffle" onclick="shuffleCards()">🔀 Zamiešať</button>
+        <button class="btn btn-prev" onclick="prevCard()">← Späť</button>
+        <button class="btn btn-next" onclick="nextCard()">Ďalej →</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- QUIZ VIEW -->
+  <div class="view" id="view-quiz">
+    <div id="quiz-container">
+      <div class="stats-bar">
+        <div class="stat-card"><div class="num" id="quiz-score-live">0</div><div class="label">Správnych</div></div>
+        <div class="stat-card"><div class="num" id="quiz-total-live">0</div><div class="label">Zodpovedaných</div></div>
+        <div class="stat-card"><div class="num" id="quiz-left">0</div><div class="label">Zostatok</div></div>
+      </div>
+      <div class="progress-wrap">
+        <div class="progress-fill" id="quiz-progress" style="width:0%"></div>
+      </div>
+      <div id="quiz-area"></div>
+      <div class="quiz-next-wrap">
+        <button class="btn btn-next btn-quiz-next" id="btn-quiz-next" onclick="nextQuizQuestion()">Ďalšia otázka →</button>
+      </div>
+    </div>
+    <div id="quiz-result-area" style="display:none;"></div>
+    <div style="text-align:center; margin-top:16px;">
+      <button class="btn btn-shuffle" onclick="startQuiz()">🔄 Nový kvíz</button>
+    </div>
+  </div>
+
+  <!-- OVERVIEW VIEW -->
+  <div class="view" id="view-overview">
+    <div id="overview-container"></div>
+  </div>
+
+</div>
+
+<script>
+// =====================================================
+// DATA – All questions and answers from KIB
+// =====================================================
+const categories = {
+  'ISMS': '#2563eb',
+  'CTI & Threat Intel': '#7c3aed',
+  'Riadenie rizík': '#d97706',
+  'Politiky & Stratégia': '#0891b2',
+  'Personálna bezpečnosť': '#16a34a',
+  'Bezpečnostné opatrenia': '#dc2626',
+  'BCM & Kontinuita': '#059669',
+  'Fyzická bezpečnosť': '#92400e',
+  'Dodávatelia': '#4338ca',
+  'OT & IoT': '#be185d',
+  'Krátke pojmy': '#6b7280',
+  'Praktické scenáre': '#1d4ed8',
+};
+
+const cards = [
+  // ===== ISMS =====
+  {
+    cat: 'ISMS',
+    q: 'Čo je ISMS?',
+    a: `ISMS (Information Security Management System) je systém riadenia informačnej bezpečnosti.
+
+Je to riadený súbor politík, procesov, postupov, rolí a opatrení, ktorých cieľom je chrániť informácie – hlavne ich dôvernosť, integritu a dostupnosť.
+
+ISMS pomáha:
+• identifikovať riziká a hodnotiť ich
+• navrhovať primerané bezpečnostné opatrenia
+• monitorovať ich účinnosť
+• zlepšovať bezpečnosť cez PDCA cyklus (Plan–Do–Check–Act)`,
+    src: 'KIB_01_ISMS.pdf'
+  },
+  {
+    cat: 'ISMS',
+    q: 'Čo je PDCA cyklus a ako sa používa v ISMS?',
+    a: `PDCA = Plan – Do – Check – Act (Plánuj – Realizuj – Kontroluj – Zlepšuj)
+
+Plan: Identifikuj riziká, stanoviť ciele a opatrenia
+Do: Implementuj opatrenia a procesy
+Check: Monitoruj, meraj, audituj výsledky
+Act: Zlepšuj na základe zistení, opakuj cyklus
+
+Príklad: Zníženie phishingu cez PDCA:
+→ Plan: analýza incidentov, cieľ −50% kliknutí
+→ Do: školenia, MFA, simulácie
+→ Check: meriame kliknutia a hlásenia
+→ Act: upravíme školenia podľa výsledkov`,
+    src: 'KIB_01_ISMS.pdf'
+  },
+  {
+    cat: 'ISMS',
+    q: 'Vysvetlite CIA triádu.',
+    a: `CIA triáda – tri základné ciele informačnej bezpečnosti:
+
+Confidentiality (Dôvernosť)
+Informácie dostupné iba oprávneným osobám.
+Príklad: šifrovanie, prístupové práva.
+
+Integrity (Integrita)
+Informácie správne, úplné, bez neoprávnenej zmeny.
+Príklad: hash funkcie, kontrola zmien.
+
+Availability (Dostupnosť)
+Informácie a služby dostupné vtedy, keď ich oprávnený používateľ potrebuje.
+Príklad: zálohy, redundancia, vysoká dostupnosť.`,
+    src: 'KIB_01_ISMS.pdf'
+  },
+  {
+    cat: 'ISMS',
+    q: 'Vysvetlite rozdiel medzi informačnou bezpečnosťou a kybernetickou bezpečnosťou.',
+    a: `Informačná bezpečnosť:
+Chráni informácie všeobecne – papierové aj elektronické.
+Cieľ: zachovať dôvernosť, integritu a dostupnosť informácií.
+
+Kybernetická bezpečnosť:
+Zameriava sa na ochranu informácií, systémov, sietí a služieb v kybernetickom priestore (IKT).
+
+Jednoducho:
+• Informačná bezpečnosť = ochrana informácií všeobecne
+• Kybernetická bezpečnosť = ochrana informácií a systémov v digitálnom priestore`,
+    src: 'KIB_01_ISMS.pdf'
+  },
+
+  // ===== CTI & Threat Intel =====
+  {
+    cat: 'CTI & Threat Intel',
+    q: 'Čo je Cyber Threat Intelligence (CTI)?',
+    a: `CTI je proces zhromažďovania, analýzy, distribúcie a výmeny informácií o kybernetických útokoch a aktéroch hrozieb.
+
+Cieľ: premeniť surové dáta na použiteľné informácie, podľa ktorých organizácia vie:
+• lepšie hodnotiť a prioritizovať hrozby
+• detegovať útoky
+• reagovať na incidenty
+• prijať vhodné opatrenia
+
+Príklad: CTI zistí phishingovú kampaň s konkrétnou doménou → odporúčanie: blokovať doménu, upozorniť používateľov, skontrolovať logy.`,
+    src: 'KIB_02_CTI_I.pdf'
+  },
+  {
+    cat: 'CTI & Threat Intel',
+    q: 'Vysvetlite rozdiel medzi strategickým, taktickým, operačným a technickým CTI.',
+    a: `Strategické CTI – pre manažment
+Trendy, geopolitika, dlhodobé riziká, smerovanie bezpečnosti.
+
+Taktické CTI – pre SOC a bezpečnostné tímy
+TTPs útočníkov (taktiky, techniky, postupy).
+
+Operačné CTI – pre reagovanie na incidenty
+Konkrétne prebiehajúce alebo hroziace útoky.
+
+Technické CTI – pre bezpečnostné nástroje
+Konkrétne IoC: IP adresy, domény, hashe malvéru, signatúry.`,
+    src: 'KIB_02_CTI_I.pdf'
+  },
+  {
+    cat: 'CTI & Threat Intel',
+    q: 'Čo sú IoC (Indicators of Compromise)?',
+    a: `IoC sú stopy naznačujúce, že systém mohol byť napadnutý.
+
+Príklady:
+• škodlivá IP adresa
+• podozrivá doména
+• hash malvéru
+• neznámy bežiaci proces
+• neobvyklé sieťové spojenie
+• podozrivé prihlásenie
+• zmenený systémový súbor
+
+IoC pomáhajú pri detekcii, vyšetrovaní a reakcii na incident.`,
+    src: 'KIB_02_CTI_I.pdf'
+  },
+  {
+    cat: 'CTI & Threat Intel',
+    q: 'Čo je threat modeling (modelovanie hrozieb)?',
+    a: `Systematický postup identifikácie bezpečnostných problémov v systéme.
+
+Typické otázky:
+• Čo chránime?
+• Kto na to môže útočiť?
+• Aké má útočník možnosti?
+• Kadiaľ môže prísť útok?
+• Aké zraniteľnosti môže využiť?
+• Aké opatrenia potrebujeme?
+
+Metodiky: STRIDE, PASTA, TRIKE, OCTAVE, Kill Chain, Diamond Model
+
+STRIDE triedi hrozby na: Spoofing, Tampering, Repudiation, Information disclosure, Denial of service, Elevation of privilege`,
+    src: 'KIB_02_CTI_I.pdf'
+  },
+  {
+    cat: 'CTI & Threat Intel',
+    q: 'Vysvetlite Diamond Model.',
+    a: `Diamond Model opisuje kybernetický incident pomocou 4 prvkov:
+
+Adversary (Útočník)
+Kto útok vykonáva.
+
+Capability (Schopnosť)
+Aké techniky, nástroje, postupy používa.
+
+Infrastructure (Infraštruktúra)
+Cez čo útok vykonáva – phishingová doména, server, botnet.
+
+Victim (Obeť)
+Koho alebo čo útok zasahuje.
+
+Príklad – phishing:
+• Útočník: externý aktér
+• Schopnosť: phishing, falošná prihlasovacia stránka, zber hesiel
+• Infraštruktúra: podvodná doména, webhosting
+• Obeť: zamestnanec, jeho účet, citlivé dokumenty`,
+    src: 'KIB_02_CTI_I.pdf'
+  },
+  {
+    cat: 'CTI & Threat Intel',
+    q: 'Čo sú TTPs (Tactics, Techniques and Procedures)?',
+    a: `TTPs opisujú spôsob a schopnosti útočníka.
+
+Taktika = cieľ útočníka (čo chce dosiahnuť)
+Príklad: získať prístup do systému
+
+Technika = spôsob, ako cieľ dosiahne
+Príklad: phishing, brute force, sociálne inžinierstvo
+
+Procedúra = konkrétny detailný spôsob vykonania techniky
+Príklad: útočník pošle e-mail ako "IT oddelenie", použije podobnú doménu, vloží odkaz na falošnú prihlasovaciu stránku a uloží zadané heslá.
+
+TTPs pomáhajú pochopiť schopnosti útočníka a pripraviť obranu.`,
+    src: 'KIB_02_CTI_I.pdf'
+  },
+
+  // ===== Riadenie rizík =====
+  {
+    cat: 'Riadenie rizík',
+    q: 'Vysvetlite rozdiel medzi hrozbou, zraniteľnosťou a rizikom.',
+    a: `Hrozba = niečo, čo môže spôsobiť škodu
+Príklad: phishing, ransomware, požiar, výpadok elektriny
+
+Zraniteľnosť = slabé miesto, ktoré môže hrozba využiť
+Príklad: slabé heslo, chýbajúca MFA, nezáplatovaný systém
+
+Riziko = možnosť, že hrozba využije zraniteľnosť a spôsobí dopad na aktívum
+Príklad: phishing využije nízke povedomie → kompromitácia účtu`,
+    src: 'KIB_03_Riadenie_aktív_rizík.pdf'
+  },
+  {
+    cat: 'Riadenie rizík',
+    q: 'Čo je aktívum a prečo je dôležité pri riadení rizík?',
+    a: `Aktívum = všetko, čo má pre organizáciu hodnotu.
+
+Môže byť:
+• Hmotné: servery, notebooky, budovy
+• Nehmotné: dáta, know-how, reputácia, procesy
+
+Prečo je dôležité:
+Riziko posudzujeme vždy vo vzťahu k aktívam. Najprv musíme vedieť, ČO chránime, až potom vieme určiť aké hrozby a zraniteľnosti sa toho týkajú.`,
+    src: 'KIB_03_Riadenie_aktív_rizík.pdf'
+  },
+  {
+    cat: 'Riadenie rizík',
+    q: 'Aké sú základné metódy určovania úrovne rizika?',
+    a: `Kvalitatívna metóda
+Používa slovné hodnoty: nízke, stredné, vysoké riziko.
+Jednoduchá, vhodná keď nemáme presné čísla.
+
+Semikvantitatívna metóda
+Číselná škála (napr. 1–5). Riziko = Pravdepodobnosť × Dopad
+Hodnotenie: 1–4 nízke, 5–9 stredné, 10–15 vysoké, 16–25 kritické
+
+Kvantitatívna metóda
+Riziko vyjadrené finančne (napr. ALE – Annual Loss Expectancy).
+Presnejšia, ale vyžaduje viac dát.`,
+    src: 'KIB_03_Riadenie_aktív_rizík.pdf'
+  },
+  {
+    cat: 'Riadenie rizík',
+    q: 'Aké sú základné možnosti zvládania (liečby) rizika?',
+    a: `Zníženie rizika (Risk treatment)
+Zaviesť opatrenia. Príklad: MFA, školenia, firewall.
+
+Akceptovanie rizika (Risk acceptance)
+Organizácia riziko prijme – ak je nízke alebo opatrenie je príliš drahé.
+
+Prenesenie rizika (Risk transfer)
+Presunúť na inú stranu. Príklad: poistenie, zmluvné požiadavky na dodávateľa.
+
+Vyhnutie sa riziku (Risk avoidance)
+Danú rizikovú činnosť nerobíme vôbec.
+Príklad: nepoužívame rizikovú cloudovú službu.`,
+    src: 'KIB_03_Riadenie_aktív_rizík.pdf'
+  },
+
+  // ===== Politiky & Stratégia =====
+  {
+    cat: 'Politiky & Stratégia',
+    q: 'Vysvetlite rozdiel medzi bezpečnostnou politikou, štandardom a návodom/postupom.',
+    a: `Bezpečnostná politika (Policy) – dokument najvyššej úrovne
+Určuje rámec, ciele, zodpovednosti a pravidlá.
+Príklad: Politika riadenia incidentov, Politika informačnej bezpečnosti.
+
+Bezpečnostný štandard (Standard) – konkrétnejší
+Stanovuje povinné, merateľné pravidlá.
+Príklad: Štandard tvorby hesiel, Štandard MFA, Štandard klasifikácie incidentov.
+
+Bezpečnostný návod/postup (Procedure/Guideline)
+Opisuje konkrétne kroky, ako niečo vykonať.
+Príklad: Postup nahlásenia phishingu, návod na obnovu dát, playbook pre ransomware.
+
+Politiky → rámec | Štandardy → pravidlá | Návody → realizácia`,
+    src: 'KIB_04_Strategia_politiky_Makatura_AKB.pdf'
+  },
+
+  // ===== Personálna bezpečnosť =====
+  {
+    cat: 'Personálna bezpečnosť',
+    q: 'Čo je sociálne inžinierstvo?',
+    a: `Sociálne inžinierstvo = útok cez manipuláciu človeka, aby urobil niečo, čo by inak neurobil.
+
+Príklady:
+• kliknutie na škodlivý odkaz
+• zadanie hesla na falošnej stránke
+• otvorenie škodlivej prílohy
+• odoslanie citlivých údajov
+• obídenie interných pravidiel
+
+Útočník využíva: autoritu, časový tlak, dôveru, strach, zvedavosť`,
+    src: 'KIB_05_Personalna_bezpecnost.pdf'
+  },
+  {
+    cat: 'Personálna bezpečnosť',
+    q: 'Vymenujte a vysvetlite princípy vplyvu v sociálnom inžinierstve.',
+    a: `Autorita – útočník sa tvári ako nadriadený, banka, IT
+Príklad: "Vaša banka vyžaduje okamžitú verifikáciu."
+
+Nedostatok / časový tlak – obeť musí konať rýchlo
+Príklad: "Posledná šanca na obnovenie účtu – 24 hodín."
+
+Reciprocita – útočník ponúka odmenu
+Príklad: "Darčeková karta za vyplnenie prieskumu."
+
+Sociálny dôkaz – ostatní to tiež robia
+Príklad: "Vaši kolegovia už podpísali nový bezpečnostný formulár."
+
+Záväzok a konzistentnosť – obeť chce byť konzistentná
+Sympatia – obeť dôveruje niekomu, koho má rada
+Jednota – príslušnosť k rovnakej skupine`,
+    src: 'KIB_05_Personalna_bezpecnost.pdf'
+  },
+  {
+    cat: 'Personálna bezpečnosť',
+    q: 'Aké sú personálne bezpečnostné opatrenia počas životného cyklu zamestnanca?',
+    a: `Pred nástupom:
+• Definovať bezpečnostné požiadavky na pozíciu
+• Podpísať mlčanlivosť (NDA)
+• Previerka pri citlivých pozíciách
+• Pripraviť prístupy podľa princípu najnižších oprávnení
+
+Pri nástupe:
+• Povinné úvodné školenie IS ešte pred plným prístupom
+• Pravidlá: heslá, MFA, phishing, klasifikácia, prílohy, nahlasovanie
+
+Počas pracovného pomeru:
+• Pravidelné školenia a phishingové simulácie
+• Jasný kanál na nahlasovanie incidentov
+• Pravidelné prehodnocovanie prístupov
+
+Pri zmene/ukončení:
+• Okamžité odobratie prístupov
+• Vrátenie zariadení
+• Pripomenutie mlčanlivosti`,
+    src: 'KIB_05_Personalna_bezpecnost.pdf'
+  },
+
+  // ===== Bezpečnostné opatrenia =====
+  {
+    cat: 'Bezpečnostné opatrenia',
+    q: 'Čo je bezpečnostné opatrenie a aké typy poznáme?',
+    a: `Bezpečnostné opatrenie = nástroj na riadenie rizika.
+Cieľ: znížiť riziko na prijateľnú úroveň (nie eliminácia všetkých rizík).
+
+Podľa ISO 27001 – typ implementácie:
+• Technické (firewally, MFA, šifrovanie)
+• Organizačné (politiky, procesy, školenia)
+• Ľudské/personálne (osvedomenie, kultura)
+• Fyzické (prístupové karty, CCTV, zamknuté racky)
+
+Podľa ISO 27005 – funkcia:
+• Preventívne (predchádzajú incidentu) – napr. MFA
+• Detekčné (detegujú incident) – napr. logovanie, SIEM
+• Nápravné (obnovia po incidente) – napr. zálohy`,
+    src: 'KIB_07_Bezpecnostne_opatrenia_Axenta.pdf'
+  },
+  {
+    cat: 'Bezpečnostné opatrenia',
+    q: 'Aká je pozícia a úloha manažéra kybernetickej bezpečnosti?',
+    a: `Manažér KIB zodpovedá za riadenie informačnej a kybernetickej bezpečnosti v organizácii.
+
+Kľúčové úlohy:
+• Vychádza z analýzy rizík
+• Rozhoduje o implementácii bezpečnostných opatrení
+• Zabezpečuje súlad s legislatívou a normami
+• Rieši bezpečnosť ako PROCES (nie technické detaily)
+
+Nie je to technický pracovník – je to manažér:
+→ posúdi riziká
+→ vyberie opatrenia
+→ zabezpečí implementáciu, monitoring, audit, zlepšovanie
+→ môže odporučiť akceptovanie rizika, ak náklady > potenciálna škoda`,
+    src: 'KIB_07_Bezpecnostne_opatrenia_Axenta.pdf'
+  },
+
+  // ===== BCM & Kontinuita =====
+  {
+    cat: 'BCM & Kontinuita',
+    q: 'Čo je BCM (Business Continuity Management)?',
+    a: `BCM = Riadenie kontinuity podnikania
+
+Je to schopnosť organizácie pokračovať v dodávaní produktov alebo služieb v prijateľnom čase aj počas:
+• výpadku technológií alebo energie
+• nedostupnosti zamestnancov
+• výpadku dodávateľov
+• kybernetického incidentu
+• pohromy (požiar, povodeň)
+
+BCM zahŕňa:
+• BIA – Business Impact Analysis (analýza dopadov)
+• BCP – Business Continuity Plan (plán kontinuity)
+• DRP – Disaster Recovery Plan (plán obnovy)
+• Testovanie a cvičenia plánov`,
+    src: 'KIB_12_BCM.pdf'
+  },
+  {
+    cat: 'BCM & Kontinuita',
+    q: 'Vysvetlite pojmy BIA, RTO, RPO a MTPD.',
+    a: `BIA (Business Impact Analysis)
+Analýza dopadov na podnikanie. Určuje kritické procesy a dopad ich výpadku.
+
+RTO (Recovery Time Objective)
+Maximálny prípustný čas, dokedy musí byť služba/systém obnovený.
+Príklad: RTO = 4 hodiny → systém musí byť funkčný do 4 hodín.
+
+RPO (Recovery Point Objective)
+Maximálne množstvo dát, ktoré si organizácia môže dovoliť stratiť – vyjadrené časom.
+Príklad: RPO = 1 hodina → záloha musí byť max. 1 hodinu stará.
+
+MTPD (Maximum Tolerable Period of Disruption)
+Maximálna doba výpadku, po ktorej by mal nepriaznivý vplyv na organizáciu neúnosné následky.`,
+    src: 'KIB_12_BCM.pdf'
+  },
+
+  // ===== Fyzická bezpečnosť =====
+  {
+    cat: 'Fyzická bezpečnosť',
+    q: 'Čo je fyzická bezpečnosť v kontexte kybernetickej bezpečnosti?',
+    a: `Fyzická bezpečnosť = ochrana fyzických aktív, osôb a priestorov pred neoprávneným prístupom.
+
+Príklady opatrení:
+• Identifikačné karty a biometria
+• Kamerový systém (CCTV)
+• Bezpečnostná služba
+• Zóny prístupu (verejná, pracovná, serverovňa)
+• Zamknuté IT rozvádzače/racky
+• Evidencia vstupov a výstupov
+
+Prečo je dôležitá:
+Fyzický prístup → kybernetický incident
+Príklad: ktokoľvek dostane sa do serverovne → môže ukradnúť disk alebo pripojiť USB malware.
+
+Zásada: prístup iba osobám, ktoré ho naozaj potrebujú (least privilege).`,
+    src: 'KIB_10_Fyzická bezpečnost_Axenta.pdf'
+  },
+
+  // ===== Dodávatelia =====
+  {
+    cat: 'Dodávatelia',
+    q: 'Čo je riziko dodávateľa (tretej strany)?',
+    a: `Riziko dodávateľa = riziko, že externá strana spôsobí bezpečnostný problém, výpadok alebo únik dát.
+
+Príklady:
+• Cloud provider má výpadok
+• Dodávateľ má slabé zabezpečenie
+• Subdodávateľ unikne dáta
+• Softvérový vendor dodá kompromitovanú aktualizáciu
+• Externý admin zneužije prístup
+
+Riadenie počas životného cyklu:
+1. Pred výberom: definovať bezpečnostné požiadavky
+2. Risk assessment: aké dáta/systémy, sieťový prístup, kritickosť
+3. Due diligence: politiky, certifikácie, incident management, BCP/DR
+4. Zmluva: šifrovanie, incident notification, audit rights, pravidlá pre subdodávateľov
+5. Prevádzka: monitoring SLA, prístupov, auditov, reassessment
+6. Exit: odobratie prístupov, zmazanie dát, migrácia`,
+    src: 'KIB_11_Riadenie dodávateľských vzťahov_Matej.pdf'
+  },
+
+  // ===== OT & IoT =====
+  {
+    cat: 'OT & IoT',
+    q: 'Vysvetlite rozdiel medzi IT a OT systémami.',
+    a: `IT systémy (Information Technology)
+• Spracovanie dát, podpora biznis procesov
+• Priority: dôvernosť > integrita > dostupnosť
+• Zlý údaj → chybný report
+
+OT systémy (Operational Technology)
+• Riadia fyzické procesy v reálnom čase
+• SCADA, PLC, ICS systémy (napr. elektrárne, továrne)
+• Priority: dostupnosť > integrita > bezpečnosť prevádzky
+• Zlý údaj → nesprávne fyzické rozhodnutie, poškodenie zariadenia, ohrozenie osôb
+
+Kľúčový rozdiel:
+V OT musia systémy bežať nepretržite a chyba môže mať fyzické dôsledky.`,
+    src: 'KIB_13_OT cyber SSDLC.pdf'
+  },
+  {
+    cat: 'OT & IoT',
+    q: 'Aké bezpečnostné opatrenia navrhujete pre OT systém, ktorý zobrazuje nesprávne dáta?',
+    a: `Problém: systém je dostupný, ale zobrazuje nesprávnu realitu → operátor robí zlé rozhodnutia.
+
+Z pohľadu SSDLC (bezpečného vývoja):
+• Identifikovať dôverné hranice medzi senzormi, externými feedmi a UI
+• Threat modeling pre scenáre manipulácie vstupov
+• Validácia vstupov: zdroj, formát, časová pečiatka, rozsah hodnôt
+• Neoverené dáta označiť ako "konfliktné", nie ako overenú realitu
+• Bezpečné zlyhanie: pri nekonzistentnosti upozorniť a ísť do konzervatívneho režimu
+
+Z pohľadu prevádzky OT:
+• Segmentácia siete IT/OT a DMZ
+• Autentifikácia externých dátových zdrojov
+• Kryptografické podpisovanie integrity dát
+• Redundancia: porovnávanie externého feedu so senzormi
+• Monitoring a detekcia anomálií
+• Logovanie korelačných rozhodnutí
+• Incident playbook pre operátora`,
+    src: 'KIB_13_OT cyber SSDLC.pdf'
+  },
+
+  // ===== Krátke pojmy =====
+  {
+    cat: 'Krátke pojmy',
+    q: 'Čo je MFA?',
+    a: `MFA = Multi-Factor Authentication (Viacfaktorová autentifikácia)
+
+Používateľ sa overuje viac ako jedným faktorom:
+• Niečo, čo VIE (heslo)
+• Niečo, čo MÁ (mobil, token)
+• Niečo, ČÍM JE (biometria)
+
+Príklad: heslo + kód z autentifikátora
+
+MFA je technické a preventívne opatrenie. Výrazne znižuje riziko kompromitácie účtu.`,
+    src: 'KIB_07_Bezpecnostne_opatrenia_Axenta.pdf'
+  },
+  {
+    cat: 'Krátke pojmy',
+    q: 'Čo je phishing?',
+    a: `Phishing = útok, pri ktorom sa útočník vydáva za dôveryhodný subjekt a snaží sa:
+• získať prihlasovacie údaje alebo iné citlivé informácie
+• donútiť obeť kliknúť na škodlivý odkaz
+• otvoriť škodlivú prílohu
+
+Typy: e-mail phishing, spear phishing (cielený), vishing (hlas), smishing (SMS)
+
+Typické znaky: naliehavosť, podozrivá doména, gramatické chyby, neočakávaný odkaz`,
+    src: 'KIB_05_Personalna_bezpecnost.pdf'
+  },
+  {
+    cat: 'Krátke pojmy',
+    q: 'Čo je ransomware?',
+    a: `Ransomware = škodlivý softvér, ktorý:
+1. Zašifruje dáta alebo zablokuje systém
+2. Útočník požaduje výkupné za obnovenie
+
+Dopady:
+• výpadok prevádzky
+• únik dát (double extortion)
+• finančné straty
+• reputačné poškodenie
+
+Ochrana: zálohy, aktualizácie, EDR, segmentácia siete, školenia`,
+    src: 'KIB_05_Personalna_bezpecnost.pdf'
+  },
+  {
+    cat: 'Krátke pojmy',
+    q: 'Čo je princíp least privilege (najnižších oprávnení)?',
+    a: `Least Privilege = používateľ, systém alebo proces má iba také práva, ktoré nevyhnutne potrebuje na svoju prácu.
+
+Prečo: ak útočník kompromituje účet s minimálnymi právami, môže napáchať oveľa menšie škody.
+
+Príklad:
+• Účtovník nepotrebuje prístup k zdrojovým kódom
+• Zamestnanec nepotrebuje admin práva na PC
+• Dodávateľ má prístup len k tým systémom, kde pracuje`,
+    src: 'KIB_07_Bezpecnostne_opatrenia_Axenta.pdf'
+  },
+  {
+    cat: 'Krátke pojmy',
+    q: 'Čo je defense-in-depth?',
+    a: `Defense-in-depth = viacvrstvová ochrana
+
+Princíp: ak zlyhá jedna vrstva ochrany, ďalšia ju môže zachytiť.
+
+Príklad vrstiev:
+1. Firewall a IPS (sieťová vrstva)
+2. EDR/antivírus (endpoint vrstva)
+3. MFA (autentifikačná vrstva)
+4. Šifrovanie (dátová vrstva)
+5. Monitoring a SIEM (detekčná vrstva)
+6. Zálohy (nápravná vrstva)
+7. Školenia (ľudská vrstva)`,
+    src: 'KIB_07_Bezpecnostne_opatrenia_Axenta.pdf'
+  },
+  {
+    cat: 'Krátke pojmy',
+    q: 'Čo je security by design?',
+    a: `Security by Design = bezpečnosť sa navrhuje od začiatku, nie sa pridáva dodatočne.
+
+Princípy:
+• Bezpečnostné požiadavky sa definujú v návrhovej fáze
+• Threat modeling prebieha počas vývoja (SSDLC)
+• Bezpečnosť je súčasť architektúry, nie záplata
+
+Opak: "bolt-on security" – pridávanie bezpečnosti po dokončení systému (drahšie, menej efektívne)
+
+Súvisí s SSDLC (Secure Software Development Lifecycle)`,
+    src: 'KIB_13_OT cyber SSDLC.pdf'
+  },
+  {
+    cat: 'Krátke pojmy',
+    q: 'Čo je incident a čo je SOC?',
+    a: `Incident = udalosť, ktorá ohrozuje dôvernosť, integritu alebo dostupnosť údajov, systémov alebo služieb.
+Príklady: ransomware útok, únik dát, neoprávnený prístup, DDoS.
+
+SOC (Security Operations Center) = tím alebo centrum, ktoré:
+• nepretržite monitoruje bezpečnostné udalosti
+• deteguje a vyšetruje incidenty
+• koordinuje reakciu na incidenty
+• využíva nástroje: SIEM, EDR, threat intelligence feeds`,
+    src: 'KIB_07_Bezpecnostne_opatrenia_Axenta.pdf'
+  },
+
+  // ===== Praktické scenáre =====
+  {
+    cat: 'Praktické scenáre',
+    q: 'Zamestnanec klikol na phishing a zadal heslo. Navrhnite analýzu rizika.',
+    a: `Aktívum: používateľský účet, e-mailová schránka, interné systémy, citlivé dokumenty
+
+Hrozba: phishing, sociálne inžinierstvo
+
+Zraniteľnosť: nízke bezpečnostné povedomie, chýbajúca MFA, slabý e-mail filtering
+
+Semikvantitatívne hodnotenie:
+• Pravdepodobnosť: 4/5 (vysoká)
+• Dopad: 5/5 (katastrofický – únik citlivých dát)
+• Riziko: 4 × 5 = 20 → KRITICKÁ úroveň
+
+Opatrenia:
+• Zaviesť MFA
+• Školenia a phishingové simulácie
+• E-mail filtering a blokovanie škodlivých domén
+• Monitoring prihlásení
+• Rýchla deaktivácia kompromitovaného účtu
+• Incident response postup`,
+    src: 'KIB_03_Riadenie_aktív_rizík.pdf'
+  },
+  {
+    cat: 'Praktické scenáre',
+    q: 'Navrhnite PDCA cyklus pre zvýšenie bezpečnostného povedomia zamestnancov.',
+    a: `Plan (Plánuj):
+Analyzovať incidenty, zistiť aké chyby sa opakujú.
+Cieľ: znížiť kliknutia na phishing o 50%, zlepšiť nahlasovanie.
+Plán: školenia, pravidlá hesiel, MFA, proces nahlasovania.
+
+Do (Realizuj):
+• Schulenia pre nových aj existujúcich zamestnancov
+• Phishingové simulácie
+• Zavedenie MFA a pravidiel pre silné heslá
+• Jednoduchý postup na nahlásenie podozrivého e-mailu
+
+Check (Kontroluj):
+• Koľko ľudí kliklo na simulovaný phishing
+• Koľko incidentov bolo nahlásených
+• Audity a vyhodnotenie výsledkov školení
+
+Act (Zlepšuj):
+• Upraviť školenia podľa výsledkov
+• Cielené školenie pre slabšie oddelenia
+• Posilniť e-mailovú ochranu a MFA`,
+    src: 'KIB_01_ISMS.pdf'
+  },
+  {
+    cat: 'Praktické scenáre',
+    q: 'Použite Diamond Model na phishingový incident (zamestnanec zadal údaje na falošnej stránke).',
+    a: `Adversary (Útočník):
+Externý aktér, pravdepodobne finančne motivovaný. Predstiera IT oddelenie, využíva dôveru zamestnancov.
+
+Capability (Schopnosti):
+• Phishing a sociálne inžinierstvo
+• Falošná prihlasovacia stránka (credential harvesting)
+• Masquerading (vydávanie sa za IT)
+• Exfiltrácia stiahnutých dokumentov
+
+Infrastructure (Infraštruktúra):
+• Phishingový e-mail
+• Falošná doména (podobná firemnej)
+• Webhosting falošnej prihlasovacej stránky
+
+Victim (Obeť):
+• Zamestnanci organizácie
+• Ich používateľské účty
+• Portál pre verejné obstarávanie
+• Dokumenty s osobnými a citlivými údajmi
+
+Záver: útok bol úspešný kvôli kombinácii sociálneho inžinierstva, chýbajúcej MFA a nedostatočného povedomia.`,
+    src: 'KIB_02_CTI_I.pdf'
+  },
+  {
+    cat: 'Praktické scenáre',
+    q: 'Dodávateľ má prístup do interného systému. Navrhnite riadenie rizika dodávateľa.',
+    a: `Určiť: aké systémy a dáta bude dodávateľ používať → hodnotenie rizika.
+
+Pred podpisom zmluvy:
+• Bezpečnostný dotazník
+• Preverenie certifikácií (ISO 27001, SOC 2)
+• Kontrola: MFA, logovanie, patch management, BCP/DR, incident management
+
+V zmluve:
+• Povinnosť chrániť dáta a šifrovanie
+• Pravidlá prístupu a IAM
+• Incident notification (napr. do 72 hodín)
+• Právo na audit
+• Pravidlá pre subdodávateľov
+• Vymazanie alebo vrátenie dát po ukončení
+
+Počas spolupráce:
+• Monitoring SLA a prístupov
+• Auditné správy, penetračné testy
+• Pravidelný reassessment
+
+Pri ukončení:
+• Odobratie všetkých prístupov
+• Bezpečné zmazanie alebo vrátenie dát
+• Zabezpečenie migrácie/kontinuity služby`,
+    src: 'KIB_11_Riadenie dodávateľských vzťahov_Matej.pdf'
+  },
+  {
+    cat: 'Praktické scenáre',
+    q: 'Firma stratila prístup k účtovnému systému na 2 dni. Navrhnite BCM riešenie.',
+    a: `Najprv: BIA (Business Impact Analysis)
+Dopady výpadku účtovného systému:
+• Fakturácia, mzdy, platby, reporting, zákonné povinnosti
+
+Určiť parametre:
+• RTO: dokedy musí byť systém obnovený (napr. 4 hodiny)
+• RPO: koľko dát si firma môže dovoliť stratiť (napr. 1 hodina)
+• Kritickosť procesu
+
+Opatrenia:
+• Pravidelné zálohy (offline + cloud)
+• Plán obnovy DRP s testovaním
+• Náhradný manuálny postup (workaround)
+• Zmluvné SLA s dodávateľom systému
+• Komunikačný plán (zamestnanci, zákazníci, regulátor)
+• Pravidelné cvičenia a testovanie obnovy`,
+    src: 'KIB_12_BCM.pdf'
+  },
+  {
+    cat: 'Praktické scenáre',
+    q: 'Zamestnanec poslal citlivý dokument na nesprávnu e-mailovú adresu. Navrhnite opatrenia.',
+    a: `Analýza:
+• Aktívum: citlivý dokument, osobné údaje, reputácia
+• Hrozba: ľudská chyba
+• Zraniteľnosť: chýbajúca klasifikácia, slabé povedomie, chýbajúce DLP
+
+Bezprostredne:
+• Nahlásiť incident
+• Pokúsiť sa o recall e-mailu
+• Kontaktovať príjemcu a požiadať o zmazanie
+• Ak osobné údaje → notifikácia zodpovednej osoby (GDPR)
+
+Preventívne opatrenia:
+• Klasifikácia informácií (označovanie dokumentov)
+• Pravidlá posielania citlivých dát
+• Šifrovanie príloh
+• DLP systém (Data Loss Prevention)
+• Varovanie pri externom adresátovi
+• Školenia zamestnancov
+• Proces nahlásenia a reakcie na incident`,
+    src: 'KIB_03_Riadenie_aktív_rizík.pdf'
+  },
+];
+
+// =====================================================
+// STATE
+// =====================================================
+let currentCards = [...cards];
+let currentIdx = 0;
+let isFlipped = false;
+let ratings = {}; // cardId -> 'easy'|'hard'|'skip'
+let activeCategory = 'Všetky';
+let quizCards = [];
+let quizIdx = 0;
+let quizScore = 0;
+let quizAnswered = false;
+
+// =====================================================
+// FLASHCARD LOGIC
+// =====================================================
+function buildCategoryFilters() {
+  const wrap = document.getElementById('fc-filters');
+  const cats = ['Všetky', ...Object.keys(categories)];
+  wrap.innerHTML = '';
+  cats.forEach(cat => {
+    const btn = document.createElement('button');
+    btn.className = 'filter-btn' + (cat === activeCategory ? ' active' : '');
+    btn.textContent = cat;
+    btn.onclick = () => selectCategory(cat);
+    wrap.appendChild(btn);
+  });
+}
+
+function selectCategory(cat) {
+  activeCategory = cat;
+  buildCategoryFilters();
+  if (cat === 'Všetky') {
+    currentCards = [...cards];
+  } else {
+    currentCards = cards.filter(c => c.cat === cat);
+  }
+  currentIdx = 0;
+  showCard();
+}
+
+function showCard() {
+  if (currentCards.length === 0) return;
+  const card = currentCards[currentIdx];
+  isFlipped = false;
+  document.getElementById('flashcard').classList.remove('flipped');
+  document.getElementById('fc-tag').textContent = card.cat;
+  document.getElementById('fc-question').textContent = card.q;
+  document.getElementById('fc-answer').textContent = card.a;
+  document.getElementById('fc-source').textContent = '📄 ' + card.src;
+  document.getElementById('card-counter').textContent = `${currentIdx + 1} / ${currentCards.length}`;
+  document.getElementById('rating-wrap').style.display = 'none';
+  updateStats();
+}
+
+function flipCard() {
+  isFlipped = !isFlipped;
+  document.getElementById('flashcard').classList.toggle('flipped', isFlipped);
+  if (isFlipped) {
+    document.getElementById('rating-wrap').style.display = 'flex';
+  } else {
+    document.getElementById('rating-wrap').style.display = 'none';
+  }
+}
+
+function nextCard() {
+  if (currentIdx < currentCards.length - 1) {
+    currentIdx++;
+    showCard();
+  }
+}
+
+function prevCard() {
+  if (currentIdx > 0) {
+    currentIdx--;
+    showCard();
+  }
+}
+
+function shuffleCards() {
+  for (let i = currentCards.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [currentCards[i], currentCards[j]] = [currentCards[j], currentCards[i]];
+  }
+  currentIdx = 0;
+  showCard();
+}
+
+function rateCard(rating) {
+  const key = currentCards[currentIdx].q;
+  ratings[key] = rating;
+  updateStats();
+  nextCard();
+}
+
+function updateStats() {
+  const total = cards.length;
+  const learned = Object.values(ratings).filter(r => r === 'easy').length;
+  const hard = Object.values(ratings).filter(r => r === 'hard').length;
+  const remaining = total - Object.keys(ratings).length;
+  document.getElementById('stat-learned').textContent = learned;
+  document.getElementById('stat-hard').textContent = hard;
+  document.getElementById('stat-remaining').textContent = remaining;
+  document.getElementById('progress-bar').style.width = `${(learned / total) * 100}%`;
+  document.getElementById('header-progress').textContent = `${learned} / ${total} naučených`;
+}
+
+// =====================================================
+// QUIZ LOGIC
+// =====================================================
+function shortLabel(text) {
+  const lines = text.split('\n').map(l => l.trim()).filter(l => l.length > 0);
+  return lines[0].substring(0, 120) + (lines[0].length > 120 ? '…' : '');
+}
+
+function startQuiz() {
+  quizCards = [...cards].sort(() => Math.random() - 0.5).slice(0, 15);
+  quizIdx = 0;
+  quizScore = 0;
+  quizAnswered = false;
+  document.getElementById('quiz-container').style.display = 'block';
+  document.getElementById('quiz-result-area').style.display = 'none';
+  renderQuizQuestion();
+}
+
+function renderQuizQuestion() {
+  if (quizIdx >= quizCards.length) {
+    showQuizResult();
+    return;
+  }
+  const card = quizCards[quizIdx];
+
+  // Pick 3 distractors from same category if possible, else random
+  let pool = cards.filter(c => c.q !== card.q && c.cat === card.cat);
+  if (pool.length < 3) pool = cards.filter(c => c.q !== card.q);
+  const distractors = pool.sort(() => Math.random() - 0.5).slice(0, 3);
+  const options = [card, ...distractors].sort(() => Math.random() - 0.5);
+
+  quizAnswered = false;
+  document.getElementById('quiz-score-live').textContent = quizScore;
+  document.getElementById('quiz-total-live').textContent = quizIdx;
+  document.getElementById('quiz-left').textContent = quizCards.length - quizIdx;
+  document.getElementById('quiz-progress').style.width = `${(quizIdx / quizCards.length) * 100}%`;
+  document.getElementById('btn-quiz-next').style.display = 'none';
+
+  const area = document.getElementById('quiz-area');
+  area.innerHTML = `
+    <div class="quiz-question">
+      <div class="quiz-q-num">Otázka ${quizIdx + 1} z ${quizCards.length} · ${card.cat}</div>
+      <div class="quiz-q-text">${card.q}</div>
+      <div class="quiz-options" id="quiz-opts">
+        ${options.map((o, i) => `
+          <button class="quiz-option" data-correct="${o.q === card.q}" onclick="answerQuiz(this, ${quizIdx})">
+            ${shortLabel(o.a)}
+          </button>
+        `).join('')}
+      </div>
+      <div class="quiz-explanation" id="quiz-explanation">
+        <strong>Správna odpoveď:</strong><br><br>${card.a.replace(/\n/g, '<br>')}
+      </div>
+    </div>
+  `;
+}
+
+function answerQuiz(btn, qIdx) {
+  if (quizAnswered || qIdx !== quizIdx) return;
+  quizAnswered = true;
+
+  const isCorrect = btn.dataset.correct === 'true';
+  const opts = document.querySelectorAll('.quiz-option');
+  opts.forEach(o => {
+    o.disabled = true;
+    if (o.dataset.correct === 'true') o.classList.add('correct');
+  });
+  if (!isCorrect) btn.classList.add('wrong');
+  if (isCorrect) quizScore++;
+
+  document.getElementById('quiz-explanation').classList.add('show');
+  document.getElementById('btn-quiz-next').style.display = 'inline-block';
+}
+
+function nextQuizQuestion() {
+  quizIdx++;
+  renderQuizQuestion();
+}
+
+function showQuizResult() {
+  document.getElementById('quiz-container').style.display = 'none';
+  const pct = Math.round((quizScore / quizCards.length) * 100);
+  let grade, color;
+  if (pct >= 90) { grade = 'Výborne! A'; color = '#16a34a'; }
+  else if (pct >= 75) { grade = 'Dobre! B'; color = '#2563eb'; }
+  else if (pct >= 60) { grade = 'Obstál! C'; color = '#d97706'; }
+  else { grade = 'Potrebuješ viac praxe'; color = '#dc2626'; }
+
+  document.getElementById('quiz-result-area').style.display = 'block';
+  document.getElementById('quiz-result-area').innerHTML = `
+    <div class="quiz-result">
+      <div class="score" style="color:${color}">${pct}%</div>
+      <div class="score-label">${quizScore} správnych z ${quizCards.length} otázok</div>
+      <div class="grade" style="color:${color}">${grade}</div>
+    </div>
+  `;
+}
+
+// =====================================================
+// OVERVIEW LOGIC
+// =====================================================
+function buildOverview() {
+  const container = document.getElementById('overview-container');
+  const byCat = {};
+  cards.forEach(c => {
+    if (!byCat[c.cat]) byCat[c.cat] = [];
+    byCat[c.cat].push(c);
+  });
+
+  container.innerHTML = Object.entries(byCat).map(([cat, items]) => `
+    <div class="overview-section">
+      <h3>${cat}</h3>
+      ${items.map((item, i) => `
+        <div class="overview-q">
+          <div class="q" id="oq-${cat}-${i}" onclick="toggleOverviewAnswer('${cat}', ${i})">
+            ${item.q}
+            <span class="source-badge">${item.src.replace('.pdf','')}</span>
+          </div>
+          <div class="a" id="oa-${cat}-${i}">${item.a}</div>
+        </div>
+      `).join('')}
+    </div>
+  `).join('');
+}
+
+function toggleOverviewAnswer(cat, i) {
+  const q = document.getElementById(`oq-${cat}-${i}`);
+  const a = document.getElementById(`oa-${cat}-${i}`);
+  q.classList.toggle('open');
+  a.classList.toggle('show');
+}
+
+// =====================================================
+// TAB SWITCHING
+// =====================================================
+function switchTab(tab) {
+  document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  document.getElementById('view-' + tab).classList.add('active');
+  event.target.classList.add('active');
+}
+
+// =====================================================
+// INIT
+// =====================================================
+buildCategoryFilters();
+showCard();
+buildOverview();
+startQuiz();
+</script>
+</body>
+</html>
